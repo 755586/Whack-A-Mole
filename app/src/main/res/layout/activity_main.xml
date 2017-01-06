@@ -6,26 +6,32 @@
         android:layout_height="match_parent">
 
     <TextView
-            android:id="@+id/main_title"
-            android:text="趣味英语打地鼠"
+            android:id="@+id/tv_main_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="30dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="180dp"/>
-    <Button android:id="@+id/main_btn_begin"
+            android:layout_marginTop="150dp"/>
+    <Button android:id="@+id/btn_main_begin"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/main_title"
+            android:layout_below="@id/tv_main_title"
             android:layout_centerHorizontal="true"
             android:text="开始游戏"
-            android:layout_marginTop="50px"
-           /> >
-    <Button android:id="@+id/main_btn_info"
+            android:layout_marginTop="100dp"
+           />
+    <Button android:id="@+id/btn_main_help"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/main_btn_begin"
+            android:layout_below="@id/btn_main_begin"
             android:layout_centerHorizontal="true"
-            android:text="游戏介绍"
+            android:text="游戏帮助"
+            android:layout_marginTop="50px"/>
+    <Button android:id="@+id/btn_main_exit"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btn_main_help"
+            android:layout_centerHorizontal="true"
+            android:text="退出游戏"
             android:layout_marginTop="50px"/>
 </RelativeLayout>
