@@ -1,14 +1,16 @@
 package com.ecjtu.whack_a_mole.activity;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
+import org.xutils.view.annotation.ContentView;
+import org.xutils.x;
 
-public class MainActivity extends AppCompatActivity {
+@ContentView(R.layout.activity_main)
+public class MainActivity extends Activity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        findViewById(R.id.tv);
+        x.view().inject(this);
     }
 }
