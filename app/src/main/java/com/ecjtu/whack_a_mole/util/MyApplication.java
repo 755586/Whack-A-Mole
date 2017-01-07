@@ -1,8 +1,7 @@
-package com.ecjtu.whack_a_mole.utll;
+package com.ecjtu.whack_a_mole.util;
 
 import android.app.Activity;
 import android.app.Application;
-import android.util.Log;
 import org.xutils.common.util.LogUtil;
 import org.xutils.x;
 

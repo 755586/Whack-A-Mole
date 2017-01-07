@@ -1,11 +1,10 @@
 package com.ecjtu.whack_a_mole.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
-import com.ecjtu.whack_a_mole.utll.MyApplication;
+import com.ecjtu.whack_a_mole.util.MyApplication;
 
 /**
  * @author Administrator on 2017/1/6.
