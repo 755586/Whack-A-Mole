@@ -3,9 +3,9 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <ListView   android:id="@+id/game_lv_it"
+    <com.ecjtu.whack_a_mole.bean.IconTextView
+            android:id="@+id/itv_game_test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-
-    </ListView>
+    </com.ecjtu.whack_a_mole.bean.IconTextView>
 </LinearLayout>

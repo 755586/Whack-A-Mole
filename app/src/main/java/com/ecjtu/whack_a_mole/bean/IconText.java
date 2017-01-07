@@ -8,28 +8,29 @@ import android.support.annotation.NonNull;
  * @version 1.0
  */
 public class IconText implements Comparable<IconText> {
-    private String mText = "";
-    private Drawable mIcon;
+    private String text = "";
+    private Drawable icon;
     private boolean selectable = true;
-    public IconText(String mText, Drawable mIcon) {
-        this.mText = mText;
-        this.mIcon = mIcon;
+
+    public IconText(String text, Drawable icon) {
+        this.text = text;
+        this.icon = icon;
     }
 
-    public String getmText() {
-        return mText;
+    public String getText() {
+        return text;
     }
 
-    public void setmText(String mText) {
-        this.mText = mText;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public Drawable getmIcon() {
-        return mIcon;
+    public Drawable getIcon() {
+        return icon;
     }
 
-    public void setmIcon(Drawable mIcon) {
-        this.mIcon = mIcon;
+    public void setIcon(Drawable icon) {
+        this.icon = icon;
     }
 
     public boolean isSelectable() {
@@ -43,7 +44,7 @@ public class IconText implements Comparable<IconText> {
     @Override
     public int compareTo(@NonNull IconText iconText) {
        if(iconText!=null){
-           return this.mText.compareTo(iconText.getmText());
+           return this.text.compareTo(iconText.getText());
        }else{
            throw new IllegalArgumentException();
        }
