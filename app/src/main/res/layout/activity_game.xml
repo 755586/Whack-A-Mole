@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <TextView
+              android:layout_height="match_parent"
+        android:layout_margin="10dp">
+    <TextView android:id="@+id/tv_game_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="100dp"
+              android:layout_centerHorizontal="true"
+            android:layout_marginTop="60dp"
             android:text="Table"
             android:textSize="60sp"/>
-
+    <ProgressBar
+            android:id="@+id/pBar_game_time"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"/>
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="30dp">
+            android:layout_below="@id/tv_game_title"
+            android:layout_above="@id/pBar_game_time">
         <com.ecjtu.whack_a_mole.bean.IconTextView
                 android:id="@+id/itv_game_no5"
                 android:layout_width="wrap_content"
@@ -77,6 +84,6 @@
                 android:layout_toRightOf="@id/itv_game_no8"
                 android:layout_alignBottom="@id/itv_game_no8">
         </com.ecjtu.whack_a_mole.bean.IconTextView>
-
     </RelativeLayout>
-</LinearLayout>
+
+</RelativeLayout>
