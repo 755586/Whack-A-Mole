@@ -3,9 +3,80 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <com.ecjtu.whack_a_mole.bean.IconTextView
-            android:id="@+id/itv_game_test"
+    <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-    </com.ecjtu.whack_a_mole.bean.IconTextView>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100dp"
+            android:text="Table"
+            android:textSize="60sp"/>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="30dp">
+        <com.ecjtu.whack_a_mole.bean.IconTextView
+                android:id="@+id/itv_game_no5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+        </com.ecjtu.whack_a_mole.bean.IconTextView>
+        <com.ecjtu.whack_a_mole.bean.IconTextView
+                android:id="@+id/itv_game_no2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/itv_game_no5"
+                android:layout_alignLeft="@id/itv_game_no5">
+        </com.ecjtu.whack_a_mole.bean.IconTextView>
+        <com.ecjtu.whack_a_mole.bean.IconTextView
+                android:id="@+id/itv_game_no1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/itv_game_no2"
+                android:layout_alignBottom="@id/itv_game_no2">
+        </com.ecjtu.whack_a_mole.bean.IconTextView>
+        <com.ecjtu.whack_a_mole.bean.IconTextView
+                android:id="@+id/itv_game_no3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/itv_game_no2"
+                android:layout_alignBottom="@id/itv_game_no2">
+        </com.ecjtu.whack_a_mole.bean.IconTextView>
+        <com.ecjtu.whack_a_mole.bean.IconTextView
+                android:id="@+id/itv_game_no4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/itv_game_no5"
+                android:layout_alignBottom="@id/itv_game_no5">
+        </com.ecjtu.whack_a_mole.bean.IconTextView>
+        <com.ecjtu.whack_a_mole.bean.IconTextView
+                android:id="@+id/itv_game_no6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/itv_game_no5"
+                android:layout_alignBottom="@id/itv_game_no5">
+        </com.ecjtu.whack_a_mole.bean.IconTextView>
+        <com.ecjtu.whack_a_mole.bean.IconTextView
+                android:id="@+id/itv_game_no8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/itv_game_no5"
+                android:layout_alignLeft="@id/itv_game_no5">
+        </com.ecjtu.whack_a_mole.bean.IconTextView>
+        <com.ecjtu.whack_a_mole.bean.IconTextView
+                android:id="@+id/itv_game_no7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/itv_game_no8"
+                android:layout_alignBottom="@id/itv_game_no8">
+        </com.ecjtu.whack_a_mole.bean.IconTextView>
+        <com.ecjtu.whack_a_mole.bean.IconTextView
+                android:id="@+id/itv_game_no9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/itv_game_no8"
+                android:layout_alignBottom="@id/itv_game_no8">
+        </com.ecjtu.whack_a_mole.bean.IconTextView>
+
+    </RelativeLayout>
 </LinearLayout>

@@ -16,8 +16,8 @@ import java.util.List;
 
 @ContentView(R.layout.activity_game)
 public class GameActivity extends BaseActivity {
-    @ViewInject(R.id.itv_game_test)
-    private IconTextView itv_game_test;
+    @ViewInject(R.id.itv_game_no5)
+    private IconTextView itv_game_no5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +27,8 @@ public class GameActivity extends BaseActivity {
     }
 
     private void initData() {
-        itv_game_test.setIconText(new IconText("apple",getResources().getDrawable(R.mipmap.ds4)));
-        itv_game_test.setOnClickListener(new View.OnClickListener() {
+        itv_game_no5.setIconText(new IconText("apple",getResources().getDrawable(R.mipmap.ds4)));
+        itv_game_no5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((IconTextView) view).changeIcon(getResources().getDrawable(R.mipmap.ds3));
