@@ -1,6 +1,7 @@
 package com.ecjtu.whack_a_mole.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,19 +35,21 @@ public class GameActivity extends BaseActivity {
     private static final int maxProgress = 400;
     private static final int timeOut = 8000;
     private int[] moles = new int[3];
+    //handle 接收游戏线程反馈的消息
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0x123:{//succuss
                     isGameOver = true;
-                    initData();
-                    startGameThread();
+                    initData();//游戏继续，重新初始化游戏界面，弹出地鼠
                     break;
                 }
                 case 0x124:{//error
                     toast("游戏结束");
                     isGameOver = true;
+                    removeALLActivity();
+                    startActivity(new Intent(GameActivity.this,MainActivity.class));
                     break;
                 }
                 case 0x125:{//update time
@@ -61,42 +64,60 @@ public class GameActivity extends BaseActivity {
             super.handleMessage(msg);
         }
     };
+    //保存游戏页面的布局ID
     private int[] noIds = {R.id.itv_game_no1,R.id.itv_game_no2,R.id.itv_game_no3
             ,R.id.itv_game_no4, itv_game_no5,R.id.itv_game_no6
             ,R.id.itv_game_no7,R.id.itv_game_no8,R.id.itv_game_no9};
-
+    //保存跳出的地鼠
     private List<IconTextView> itvList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         x.view().inject(this);
-        initView();
-        initData();
-        startGameThread();
+        initView();//初始化视图及监听
+        initData();//初始化数据
+        startGameThread();//开始游戏
     }
 
+    //初始化数据
     private void initData() {
         isGameOver = false;
-        progress = maxProgress;
+        progress = maxProgress;//重置进度
+        //重置界面布局属性（置空、不能点击）
         for(int i=0;i<itvList.size();i++){
             IconTextView iconTextView = itvList.get(i);
             iconTextView.setIconText(new IconText("",null));
             iconTextView.setClickable(false);
         }
-        for(int i=0;i<moles.length;i++){
-            moles[i] = MyRandom.getNumble(itvList.size());
-            itvList.get(moles[i]).setClickable(true);
-            itvList.get(moles[i]).setIconText(new IconText(""+i,getResources().getDrawable(R.mipmap.ds4)));
+        //随机获取地鼠弹出的号码
+        int len = moles.length;
+        for(int i=0;i<len;){
+            int r = MyRandom.getNumble(itvList.size());
+            boolean ok=true;
+            for(int j=0;j<i;j++){//避免取得的随机数相同
+                if(moles[j]==r){
+                    ok=false;
+                    break;
+                }
+            }
+            if(ok){
+                moles[i] =r;
+                itvList.get(r).setClickable(true);
+                itvList.get(r).setIconText(new IconText(""+i,getResources().getDrawable(R.mipmap.ds4)));
+                i++;
+            }
         }
         tv_game_title.setText("0");
         pBar_game_time.setMax(maxProgress);
         pBar_game_time.setProgress(maxProgress);
     }
 
+    //初始化视图及监听
     private void initView() {
         itvList = new ArrayList<>();
         for(int id:noIds){
             IconTextView itv = (IconTextView) findViewById(id);
+            //设置地鼠被点击的事件
             itv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -117,21 +138,24 @@ public class GameActivity extends BaseActivity {
         }
 
     }
+
+    //开始游戏
     private void startGameThread(){
+        //创建一个同步的线程，用来实时监听游戏进度
         Thread thread = new Thread(new Runnable() {
             @Override
             public synchronized  void run() {
-                while(!isGameOver){
+                while(!isGameOver){//游戏未结束
                     Message message = Message.obtain();
-                    if(progress<=0){
+                    if(progress<=0){//超时
                         message.what = 0x126;
                         handler.sendMessage(message);
                         isGameOver = true;
                     }else{
+                        progress-=(timeRefresh*maxProgress/timeOut);
                         message.what = 0x125;
                         handler.sendMessage(message);
                     }
-                    progress-=(timeRefresh*maxProgress/timeOut);
                     try {
                         Thread.sleep(timeRefresh);
                     } catch (InterruptedException e) {
