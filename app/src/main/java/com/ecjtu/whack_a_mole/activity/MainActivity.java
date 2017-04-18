@@ -43,17 +43,12 @@ public class MainActivity extends BaseActivity {
     }
 
     private void help() {
-        String url = "http://192.168.31.9:8080/Demo/system/center/user?action=list&page=1&rows=5";
+        String url = "http://139.199.210.125:8097/mole/system/word?action=getListByType&type_name=";
         RequestParams params = new RequestParams(url);
         x.http().post(params, new Callback.CommonCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject result) {
-                try {
-                    Object total = result.get("total");
-                    System.out.println("total = " + total);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                System.out.println(result.toString());
                 toast(result.toString());
             }
 
