@@ -10,7 +10,7 @@ import com.ecjtu.whack_a_mole.activity.LoginActivity;
  * @author Administrator on 2017-04-20.
  * @version 1.0
  */
-public class MyDialog {
+public class DialogUtils {
     private static ProgressDialog waitingDialog = null;//加载中的弹框
     private static AlertDialog.Builder normalDialog = null;//含确认取消按钮的提示框
 
@@ -46,9 +46,9 @@ public class MyDialog {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        //dialog.dismiss();;
                     }
                 });
-        normalDialog.show();
+        normalDialog.create().show();
     }
 }

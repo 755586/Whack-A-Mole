@@ -1,17 +1,12 @@
 package com.ecjtu.whack_a_mole.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
-import com.ecjtu.whack_a_mole.util.MyDialog;
-import org.json.JSONException;
+import com.ecjtu.whack_a_mole.util.DialogUtils;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
-import org.xutils.common.util.LogUtil;
 import org.xutils.http.RequestParams;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
@@ -32,7 +27,7 @@ public class MainActivity extends BaseActivity {
                break;
            }
            case R.id.btn_main_help:{
-               MyDialog.showAlertDialog(MainActivity.this,"","帮助");
+               DialogUtils.showAlertDialog(MainActivity.this,"","帮助");
                 break;
            }
            case R.id.btn_main_exit:{
