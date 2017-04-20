@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.ecjtu.whack_a_mole.util.MyDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
@@ -31,8 +32,7 @@ public class MainActivity extends BaseActivity {
                break;
            }
            case R.id.btn_main_help:{
-                toast("游戏帮助");
-                help();
+               MyDialog.showAlertDialog(MainActivity.this,"","帮助");
                 break;
            }
            case R.id.btn_main_exit:{
