@@ -85,8 +85,8 @@ public class RegisterDialog extends Dialog{
                     Object success = result.get("success");
                     if(success.equals(true)){
                         System.out.println("注册成功-onSuccess");
-                        Toast.makeText(context,"注册成功",Toast.LENGTH_SHORT);
                         RegisterDialog.this.dismiss();
+                        Toast.makeText(context,"注册成功",Toast.LENGTH_LONG);
                     }else{
                         System.out.println("注册失败-onSuccess");
                         DialogUtils.showAlertDialog(context,"提示",result.get("errorMsg").toString());
