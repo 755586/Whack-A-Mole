@@ -2,6 +2,7 @@ package com.ecjtu.whack_a_mole.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -45,7 +46,14 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private void login(String name,String password) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        x.view().inject(this);
+        initView();
+    }
+
+    private void login(String name, String password) {
         DialogUtils.showWaitingDialog(LoginActivity.this,"登录中...");
         String url = "http://139.199.210.125:8097/mole/login?action=checkUser&username="+name+"&password="+password;
         RequestParams params = new RequestParams(url);
@@ -103,12 +111,7 @@ public class LoginActivity extends BaseActivity {
         registerDialog.show();
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        x.view().inject(this);
-        initView();
-    }
+
 
     private void initView() {
         cb_password.setChecked(false);

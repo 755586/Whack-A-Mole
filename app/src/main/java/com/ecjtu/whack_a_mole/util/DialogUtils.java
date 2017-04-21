@@ -31,7 +31,7 @@ public class DialogUtils {
      * @setCancelable 为使屏幕不可点击，设置为不可取消(false)
      * 下载等事件完成后，主动调用函数关闭该Dialog
      */
-        waitingDialog.hide();
+        waitingDialog.dismiss();
     }
     public static void showAlertDialog(Context context,String title,String msg){
         /* @setIcon 设置对话框图标
