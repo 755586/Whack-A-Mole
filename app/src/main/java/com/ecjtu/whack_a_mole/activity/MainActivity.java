@@ -56,16 +56,12 @@ public class MainActivity extends BaseActivity {
             switch (msg.what) {
                 case 0x123:{//succuss
                     int temp = msg.arg1;
-                    System.out.println("===handleMessage===");
-                    System.out.println(msg.arg1);
-                    System.out.println(msg.obj.toString());
                     if(temp==0){
-                        System.out.println("succ");
                         showMenuDialog();
                     }else{
                         String err = msg.obj.toString();
                         toast(msg.obj.toString());
-                        System.out.println("err");
+                        System.out.println(err);
                     }
                     break;
                 }
@@ -73,8 +69,8 @@ public class MainActivity extends BaseActivity {
             super.handleMessage(msg);
         }
     };
-    Set<Integer> yourChoices = new HashSet<>();
     private void showMenuDialog() {
+        final Set<Integer> yourChoices = new HashSet<>();
         final String[] items = new String[nameList.size()];
         // 设置默认选中的选项，全为false默认均未选中
         final boolean initChoiceSets[]=new boolean[nameList.size()];
@@ -86,14 +82,12 @@ public class MainActivity extends BaseActivity {
         AlertDialog.Builder multiChoiceDialog =
                 new AlertDialog.Builder(MainActivity.this);
         multiChoiceDialog.setTitle("请选择游戏模式");
-        System.out.println(items.length);
-        System.out.println(initChoiceSets.length);
         multiChoiceDialog.setMultiChoiceItems(items, initChoiceSets,
                 new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which,
                                         boolean isChecked) {
-                        System.out.println(which + " == " +isChecked);
+                        //System.out.println(which + " == " +isChecked);
                         if (isChecked) {
                             yourChoices.add(which);
                         } else {
@@ -108,16 +102,24 @@ public class MainActivity extends BaseActivity {
                         String str = "";
                         for (Integer i:yourChoices) {
                             str += items[i] + " ";
-                            toast("你选中了" + str);
-                            System.out.println(items[i]+ " " +i);
+                            //System.out.println(items[i]+ " " +i);
                         }
+                        loadWord(yourChoices);
                     }
                 });
         multiChoiceDialog.show();
     }
 
+    private void loadWord(Set<Integer> yourChoices) {
+        if(yourChoices.size()>0){
+            int type = allTypeMap.get(nameList.get(0));
+            getWordByType(type);
+        }
+    }
+
 
     private void getWordByType(int type) {
+        DialogUtils.showWaitingDialog(MainActivity.this,"数据加载中");
         String url = "http://139.199.210.125:8097/mole/system/word?action=getListByType&type="+type;
         RequestParams params = new RequestParams(url);
         x.http().post(params, new Callback.CommonCallback<JSONObject>() {
@@ -129,17 +131,17 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                toast("error");
+                toast("加载数据出错");
             }
 
             @Override
             public void onCancelled(CancelledException cex) {
-                toast("cancel");
+
             }
 
             @Override
             public void onFinished() {
-                toast("finish");
+                DialogUtils.hideWaitingDialog();
             }
         });
     }
@@ -147,8 +149,8 @@ public class MainActivity extends BaseActivity {
     private void getAllType() {
         if(nameList!=null&&allTypeMap!=null){
             System.out.println("===存在数据===");
-            System.out.println(nameList.toString());
-            System.out.println(allTypeMap.toString());
+//            System.out.println(nameList.toString());
+//            System.out.println(allTypeMap.toString());
             Message msg = Message.obtain();
             msg.what=0x123;
             msg.arg1=0;
@@ -186,8 +188,8 @@ public class MainActivity extends BaseActivity {
                         allTypeMap.put(key,value);
                     }
                     GameWord.getInstance().setAllType(allTypeMap);
-                    System.out.println(GameWord.getInstance().getAllTypeName().toString());
-                    System.out.println(GameWord.getInstance().getAllType().toString());
+//                    System.out.println(GameWord.getInstance().getAllTypeName().toString());
+//                    System.out.println(GameWord.getInstance().getAllType().toString());
                     msg.arg1=0;
                     msg.obj="菜单加载成功";
                 } catch (JSONException e) {
