@@ -6,12 +6,14 @@ import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.ecjtu.whack_a_mole.bean.IconText;
 import com.ecjtu.whack_a_mole.bean.IconTextView;
+import com.ecjtu.whack_a_mole.util.GameWord;
 import com.ecjtu.whack_a_mole.util.MyRandom;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
@@ -74,9 +76,18 @@ public class GameActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         x.view().inject(this);
+        test();
         initView();//初始化视图及监听
         initData();//初始化数据
-        startGameThread();//开始游戏
+        //startGameThread();//开始游戏
+    }
+
+    private void test() {
+        int choose = GameWord.getInstance().getChoose();
+        List<Pair<String, String>> wordlist = GameWord.getInstance().getWordListMap().get(choose);
+        for(Pair<String,String>pairr:wordlist){
+            System.out.println(pairr.first+"-"+pairr.second);
+        }
     }
 
     //初始化数据

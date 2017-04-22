@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 import com.ecjtu.whack_a_mole.util.DialogUtils;
@@ -26,6 +27,7 @@ import java.util.*;
 public class MainActivity extends BaseActivity {
     private List<String> nameList = GameWord.getInstance().getAllTypeName();
     private Map<String,Integer> allTypeMap = GameWord.getInstance().getAllType();
+    private int chooseMenuItem;
 
     @ViewInject(R.id.tv_main_title)
     private TextView tv_main_title;
@@ -69,54 +71,41 @@ public class MainActivity extends BaseActivity {
             super.handleMessage(msg);
         }
     };
+
     private void showMenuDialog() {
-        final Set<Integer> yourChoices = new HashSet<>();
+        chooseMenuItem = 0;
         final String[] items = new String[nameList.size()];
-        // 设置默认选中的选项，全为false默认均未选中
-        final boolean initChoiceSets[]=new boolean[nameList.size()];
         for(int i=0;i<nameList.size();i++){
             items[i] = nameList.get(i);
-            initChoiceSets[i] = false;
         }
-        yourChoices.clear();
-        AlertDialog.Builder multiChoiceDialog =
-                new AlertDialog.Builder(MainActivity.this);
-        multiChoiceDialog.setTitle("请选择游戏模式");
-        multiChoiceDialog.setMultiChoiceItems(items, initChoiceSets,
-                new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which,
-                                        boolean isChecked) {
-                        //System.out.println(which + " == " +isChecked);
-                        if (isChecked) {
-                            yourChoices.add(which);
-                        } else {
-                            yourChoices.remove(which);
+        if(items.length>0){
+            AlertDialog.Builder singleChoiceDialog =
+                    new AlertDialog.Builder(MainActivity.this);
+            singleChoiceDialog.setTitle("请选择游戏模式");
+            singleChoiceDialog.setSingleChoiceItems(items, 0,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            chooseMenuItem = which;
                         }
-                    }
-                });
-        multiChoiceDialog.setPositiveButton("确定",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String str = "";
-                        for (Integer i:yourChoices) {
-                            str += items[i] + " ";
-                            //System.out.println(items[i]+ " " +i);
+                    });
+            singleChoiceDialog.setPositiveButton("确定",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (chooseMenuItem == -1) {
+                                toast("请选择模式");
+                            }else{
+                                int type = allTypeMap.get(nameList.get(chooseMenuItem));
+                                getWordByType(type);
+                            }
                         }
-                        loadWord(yourChoices);
-                    }
-                });
-        multiChoiceDialog.show();
-    }
-
-    private void loadWord(Set<Integer> yourChoices) {
-        if(yourChoices.size()>0){
-            int type = allTypeMap.get(nameList.get(0));
-            getWordByType(type);
+                    });
+            singleChoiceDialog.show();
+        }else{
+            toast("系统维护中...");
         }
     }
-
 
     private void getWordByType(int type) {
         DialogUtils.showWaitingDialog(MainActivity.this,"数据加载中");
@@ -125,8 +114,9 @@ public class MainActivity extends BaseActivity {
         x.http().post(params, new Callback.CommonCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject result) {
-                System.out.println(result.toString());
-                toast(result.toString());
+                //System.out.println(result.toString());
+                //toast(result.toString());
+                loadGame(result);
             }
 
             @Override
@@ -144,6 +134,37 @@ public class MainActivity extends BaseActivity {
                 DialogUtils.hideWaitingDialog();
             }
         });
+    }
+
+    private void loadGame(JSONObject result) {
+        List<Pair<String, String>> wordList = GameWord.getInstance().getWordListMap().get(chooseMenuItem);
+        if(wordList!=null){
+            System.out.println("存在词汇信息");
+        }else{
+            System.out.println("不存在词汇信息");
+            wordList = new ArrayList<>();
+            try {
+                JSONArray rows = (JSONArray) result.get("rows");
+                for(int i=0;i<rows.length();i++){
+                    JSONObject word_obj = rows.getJSONObject(i);
+                    String chinese = word_obj.get("chinese").toString();
+                    String english = word_obj.get("english").toString();
+                    Pair<String,String> word = new Pair<>(english,chinese);
+                    wordList.add(word);
+                }
+                GameWord.getInstance().getWordListMap().put(chooseMenuItem,wordList);
+                if(wordList.size()>4){
+                    System.out.println("加载词汇数据成功,正在进入游戏...");
+                    GameWord.getInstance().setChoose(chooseMenuItem);
+                    startActivity(new Intent(MainActivity.this,GameActivity.class));
+                }else{
+                    toast("当前无法进入该模式");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                toast("加载数据出现异常");
+            }
+        }
     }
 
     private void getAllType() {
@@ -165,28 +186,23 @@ public class MainActivity extends BaseActivity {
         msg.arg1=1;
         msg.obj="获取菜单数据中...";
         DialogUtils.showWaitingDialog(MainActivity.this,"正在加载菜单...");
-        String url = "http://139.199.210.125:8097/mole/system/word?action=getAllType";
+        String url = "http://139.199.210.125:8097/mole/system/wordType?action=getAllType";
         RequestParams params = new RequestParams(url);
         x.http().post(params, new Callback.CommonCallback<JSONObject>() {
             @Override
             public void onSuccess(JSONObject result) {
                 try {
-                    JSONArray allTypeName = (JSONArray) result.get("allTypeName");
-                    JSONObject allType = (JSONObject) result.get("allType");
-
+                    JSONArray allType = (JSONArray) result.get("allType");
                     nameList = new ArrayList<String>();
                     allTypeMap = new HashMap<String, Integer>();
-                    for(int i=0;i<allTypeName.length();i++){
-                        Object o = allTypeName.get(i);
-                        nameList.add(o.toString());
+                    for(int i=0;i<allType.length();i++){
+                        JSONObject type = (JSONObject) allType.get(i);
+                        Integer id = (Integer) type.get("id");
+                        String type_name = (String) type.get("type_name");
+                        nameList.add(type_name)
+;                       allTypeMap.put(type_name,id);
                     }
                     GameWord.getInstance().setAllTypeName(nameList);
-                    Iterator iterator = allType.keys();
-                    while(iterator.hasNext()){
-                        String key = (String) iterator.next();
-                        Integer value = allType.getInt(key);
-                        allTypeMap.put(key,value);
-                    }
                     GameWord.getInstance().setAllType(allTypeMap);
 //                    System.out.println(GameWord.getInstance().getAllTypeName().toString());
 //                    System.out.println(GameWord.getInstance().getAllType().toString());
