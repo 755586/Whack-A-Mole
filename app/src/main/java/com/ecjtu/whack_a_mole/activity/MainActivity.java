@@ -41,8 +41,7 @@ public class MainActivity extends BaseActivity {
                break;
            }
            case R.id.btn_main_help:{
-//               DialogUtils.showAlertDialog(MainActivity.this,"","帮助");
-               getWordByType(0);
+               toast("游戏帮助");
                break;
            }
            case R.id.btn_main_exit:{
@@ -71,6 +70,17 @@ public class MainActivity extends BaseActivity {
             super.handleMessage(msg);
         }
     };
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        x.view().inject(this);
+        initView();
+    }
+
+    private void initView() {
+        tv_main_title.setText("趣味英语打地鼠");
+    }
 
     private void showMenuDialog() {
         chooseMenuItem = 0;
@@ -140,6 +150,13 @@ public class MainActivity extends BaseActivity {
         List<Pair<String, String>> wordList = GameWord.getInstance().getWordListMap().get(chooseMenuItem);
         if(wordList!=null){
             System.out.println("存在词汇信息");
+            if(wordList.size()>=9){
+                System.out.println("加载词汇数据成功,正在进入游戏...");
+                GameWord.getInstance().setChoose(chooseMenuItem);
+                startActivity(new Intent(MainActivity.this,GameActivity.class));
+            }else{
+                toast("当前无法进入该模式");
+            }
         }else{
             System.out.println("不存在词汇信息");
             wordList = new ArrayList<>();
@@ -153,7 +170,7 @@ public class MainActivity extends BaseActivity {
                     wordList.add(word);
                 }
                 GameWord.getInstance().getWordListMap().put(chooseMenuItem,wordList);
-                if(wordList.size()>4){
+                if(wordList.size()>=9){
                     System.out.println("加载词汇数据成功,正在进入游戏...");
                     GameWord.getInstance().setChoose(chooseMenuItem);
                     startActivity(new Intent(MainActivity.this,GameActivity.class));
@@ -200,7 +217,7 @@ public class MainActivity extends BaseActivity {
                         Integer id = (Integer) type.get("id");
                         String type_name = (String) type.get("type_name");
                         nameList.add(type_name)
-;                       allTypeMap.put(type_name,id);
+                        ;                       allTypeMap.put(type_name,id);
                     }
                     GameWord.getInstance().setAllTypeName(nameList);
                     GameWord.getInstance().setAllType(allTypeMap);
@@ -236,18 +253,6 @@ public class MainActivity extends BaseActivity {
                 DialogUtils.hideWaitingDialog();
             }
         });
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        x.view().inject(this);
-        initView();
-        //getAllType();
-    }
-
-    private void initView() {
-        tv_main_title.setText("趣味英语打地鼠");
     }
 
 }

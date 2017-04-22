@@ -37,6 +37,8 @@ public class GameActivity extends BaseActivity {
     private static final int maxProgress = 400;
     private static final int timeOut = 8000;
     private int[] moles = new int[3];
+    private int errNum = 3;
+
     //handle 接收游戏线程反馈的消息
     private Handler handler = new Handler(){
         @Override
@@ -48,10 +50,17 @@ public class GameActivity extends BaseActivity {
                     break;
                 }
                 case 0x124:{//error
-                    toast("游戏结束");
-                    isGameOver = true;
-                    removeALLActivity();
-                    startActivity(new Intent(GameActivity.this,MainActivity.class));
+                    errNum--;
+                    System.out.println("errNum = " + errNum);
+                    if(errNum<=0){
+                        toast("Game Over");
+                        isGameOver = true;
+                        removeALLActivity();
+                        startActivity(new Intent(GameActivity.this,MainActivity.class));
+                    }else{
+                        toast("生命值减一");
+                        initData();
+                    }
                     break;
                 }
                 case 0x125:{//update time
@@ -59,7 +68,9 @@ public class GameActivity extends BaseActivity {
                     break;
                 }
                 case 0x126:{//timeOut
-                    toast("超时了");
+                    toast("Game Over");
+                    removeALLActivity();
+                    startActivity(new Intent(GameActivity.this,MainActivity.class));
                     break;
                 }
             }
@@ -72,26 +83,50 @@ public class GameActivity extends BaseActivity {
             ,R.id.itv_game_no7,R.id.itv_game_no8,R.id.itv_game_no9};
     //保存跳出的地鼠
     private List<IconTextView> itvList;
+    private int choose = GameWord.getInstance().getChoose();
+    private List<Pair<String, String>> wordlist = GameWord.getInstance().getWordListMap().get(choose);
+    private int wordTotal = wordlist.size();
+    private String chinese;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         x.view().inject(this);
-        test();
         initView();//初始化视图及监听
         initData();//初始化数据
-        //startGameThread();//开始游戏
+        startGameThread();//开始游戏
     }
 
-    private void test() {
-        int choose = GameWord.getInstance().getChoose();
-        List<Pair<String, String>> wordlist = GameWord.getInstance().getWordListMap().get(choose);
-        for(Pair<String,String>pairr:wordlist){
-            System.out.println(pairr.first+"-"+pairr.second);
+    //初始化视图及监听
+    private void initView() {
+        itvList = new ArrayList<>();
+        for(int id:noIds){
+            IconTextView itv = (IconTextView) findViewById(id);
+            //设置地鼠被点击的事件
+            itv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //moles : 存储跳出的地鼠Id，默认下标为0的地鼠为正确答案，其他的事干扰项
+                    if(view.getId()==itvList.get(moles[0]).getId()){
+                        ((IconTextView) view).changeIcon(getResources().getDrawable(R.mipmap.ds3));
+                        Message message = Message.obtain();
+                        message.what = 0x123;
+                        handler.sendMessage(message);
+                    }else{
+                        Message message = Message.obtain();
+                        message.what = 0x124;
+                        handler.sendMessage(message);
+                    }
+                }
+            });
+            itv.setClickable(false);
+            itvList.add(itv);
         }
+
     }
 
     //初始化数据
     private void initData() {
+        chinese = "";
         isGameOver = false;
         progress = maxProgress;//重置进度
         //重置界面布局属性（置空、不能点击）
@@ -114,41 +149,29 @@ public class GameActivity extends BaseActivity {
             if(ok){
                 moles[i] =r;
                 itvList.get(r).setClickable(true);
-                itvList.get(r).setIconText(new IconText(""+i,getResources().getDrawable(R.mipmap.ds4)));
+                String english = getEnglish(r,i);
+                itvList.get(r).setIconText(new IconText(english,getResources().getDrawable(R.mipmap.ds4)));
                 i++;
             }
         }
-        tv_game_title.setText("0");
+        System.out.println("=====moles====");
+        for(int i=0;i<len;i++){
+            System.out.println(moles[i]);
+        }
+        tv_game_title.setText(chinese);
         pBar_game_time.setMax(maxProgress);
         pBar_game_time.setProgress(maxProgress);
     }
 
-    //初始化视图及监听
-    private void initView() {
-        itvList = new ArrayList<>();
-        for(int id:noIds){
-            IconTextView itv = (IconTextView) findViewById(id);
-            //设置地鼠被点击的事件
-            itv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(view.getId()==itvList.get(moles[0]).getId()){
-                        ((IconTextView) view).changeIcon(getResources().getDrawable(R.mipmap.ds3));
-                        Message message = Message.obtain();
-                        message.what = 0x123;
-                        handler.sendMessage(message);
-                    }else{
-                        Message message = Message.obtain();
-                        message.what = 0x124;
-                        handler.sendMessage(message);
-                    }
-                }
-            });
-            itv.setClickable(false);
-            itvList.add(itv);
-        }
-
+    private String getEnglish(int r,int index) {
+        System.out.println(r+"=="+index);
+        int tem = MyRandom.getNumble(wordTotal/9);
+        System.out.println("tem = " + tem);
+        Pair<String, String> english = wordlist.get(tem * 9 + r);
+        if(index==0) chinese =english.second;
+        return english.first;
     }
+
 
     //开始游戏
     private void startGameThread(){
