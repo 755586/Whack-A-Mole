@@ -68,9 +68,17 @@ public class GameActivity extends BaseActivity {
                     break;
                 }
                 case 0x126:{//timeOut
-                    toast("Game Over");
-                    removeALLActivity();
-                    startActivity(new Intent(GameActivity.this,MainActivity.class));
+                    errNum--;
+                    System.out.println("errNum = " + errNum);
+                    if(errNum<=0){
+                        toast("Game Over");
+                        isGameOver = true;
+                        removeALLActivity();
+                        startActivity(new Intent(GameActivity.this,MainActivity.class));
+                    }else{
+                        toast("生命值减一");
+                        initData();
+                    }
                     break;
                 }
             }
@@ -184,7 +192,6 @@ public class GameActivity extends BaseActivity {
                     if(progress<=0){//超时
                         message.what = 0x126;
                         handler.sendMessage(message);
-                        isGameOver = true;
                     }else{
                         progress-=(timeRefresh*maxProgress/timeOut);
                         message.what = 0x125;

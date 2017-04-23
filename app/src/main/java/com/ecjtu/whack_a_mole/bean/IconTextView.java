@@ -1,6 +1,7 @@
 package com.ecjtu.whack_a_mole.bean;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.support.annotation.Nullable;
@@ -31,6 +32,7 @@ public class IconTextView extends LinearLayout{
     }
 
     public void setIconText(IconText iconText){
+        mText.setTextColor(Color.CYAN);
         mText.setText(iconText.getText());
         mIcon.setImageDrawable(iconText.getIcon());
     }

@@ -117,37 +117,11 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    //根据所选类型查询词汇信息
     private void getWordByType(int type) {
-        DialogUtils.showWaitingDialog(MainActivity.this,"数据加载中");
-        String url = "http://139.199.210.125:8097/mole/system/word?action=getListByType&type="+type;
-        RequestParams params = new RequestParams(url);
-        x.http().post(params, new Callback.CommonCallback<JSONObject>() {
-            @Override
-            public void onSuccess(JSONObject result) {
-                //System.out.println(result.toString());
-                //toast(result.toString());
-                loadGame(result);
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                toast("加载数据出错");
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-                DialogUtils.hideWaitingDialog();
-            }
-        });
-    }
-
-    private void loadGame(JSONObject result) {
+        //定义一个变量用于存储返回结果的解析数据，并尝试通过工程类获取结果
         List<Pair<String, String>> wordList = GameWord.getInstance().getWordListMap().get(chooseMenuItem);
+        //当前已存在数据，无须解析
         if(wordList!=null){
             System.out.println("存在词汇信息");
             if(wordList.size()>=9){
@@ -159,28 +133,60 @@ public class MainActivity extends BaseActivity {
             }
         }else{
             System.out.println("不存在词汇信息");
-            wordList = new ArrayList<>();
-            try {
-                JSONArray rows = (JSONArray) result.get("rows");
-                for(int i=0;i<rows.length();i++){
-                    JSONObject word_obj = rows.getJSONObject(i);
-                    String chinese = word_obj.get("chinese").toString();
-                    String english = word_obj.get("english").toString();
-                    Pair<String,String> word = new Pair<>(english,chinese);
-                    wordList.add(word);
+            DialogUtils.showWaitingDialog(MainActivity.this,"数据加载中");//弹出遮罩效果，提示正在加载数据
+            //根据词汇类型type查询词汇数据的接口地址
+            String url = "http://139.199.210.125:8097/mole/system/word?action=getListByType&type="+type;
+            RequestParams params = new RequestParams(url);
+            x.http().post(params, new Callback.CommonCallback<JSONObject>() {
+                @Override
+                public void onSuccess(JSONObject result) {//请求成功，并获取返回值
+                    //System.out.println(result.toString());
+                    //toast(result.toString());
+                    loadGame(result);//解析返回值
                 }
-                GameWord.getInstance().getWordListMap().put(chooseMenuItem,wordList);
-                if(wordList.size()>=9){
-                    System.out.println("加载词汇数据成功,正在进入游戏...");
-                    GameWord.getInstance().setChoose(chooseMenuItem);
-                    startActivity(new Intent(MainActivity.this,GameActivity.class));
-                }else{
-                    toast("当前无法进入该模式");
+
+                @Override
+                public void onError(Throwable ex, boolean isOnCallback) {//请求发生错误
+                    toast("加载数据出错");
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                toast("加载数据出现异常");
+
+                @Override
+                public void onCancelled(CancelledException cex) {//取消请求回调方法
+
+                }
+
+                @Override
+                public void onFinished() {//请求结束返回方法
+                    DialogUtils.hideWaitingDialog();//隐藏数据加载遮罩框
+                }
+            });
+        }
+    }
+    //请求结果返回值解析，并进入下一步游戏界面
+    private void loadGame(JSONObject result) {
+        //定义一个变量用于存储返回结果的解析数据，并尝试通过工程类获取结果
+        List<Pair<String, String>> wordList = GameWord.getInstance().getWordListMap().get(chooseMenuItem);
+        wordList = new ArrayList<>();
+        try {
+            JSONArray rows = (JSONArray) result.get("rows");//根据key值获取词汇数据
+            for(int i=0;i<rows.length();i++){//将获取到的json数据进行解析成数组数据并保存
+                JSONObject word_obj = rows.getJSONObject(i);
+                String chinese = word_obj.get("chinese").toString();
+                String english = word_obj.get("english").toString();
+                Pair<String,String> word = new Pair<>(english,chinese);
+                wordList.add(word);
             }
+            GameWord.getInstance().getWordListMap().put(chooseMenuItem,wordList);
+            if(wordList.size()>=9){
+                System.out.println("加载词汇数据成功,正在进入游戏...");
+                GameWord.getInstance().setChoose(chooseMenuItem);
+                startActivity(new Intent(MainActivity.this,GameActivity.class));
+            }else{
+                toast("当前无法进入该模式");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            toast("加载数据出现异常");
         }
     }
 
