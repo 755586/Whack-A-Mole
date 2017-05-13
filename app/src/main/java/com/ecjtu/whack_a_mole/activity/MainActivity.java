@@ -144,17 +144,13 @@ public class MainActivity extends BaseActivity {
                     //toast(result.toString());
                     loadGame(result);//解析返回值
                 }
-
                 @Override
                 public void onError(Throwable ex, boolean isOnCallback) {//请求发生错误
                     toast("加载数据出错");
                 }
-
                 @Override
                 public void onCancelled(CancelledException cex) {//取消请求回调方法
-
                 }
-
                 @Override
                 public void onFinished() {//请求结束返回方法
                     DialogUtils.hideWaitingDialog();//隐藏数据加载遮罩框
