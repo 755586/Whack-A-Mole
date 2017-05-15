@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Pair;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -30,6 +31,12 @@ public class GameActivity extends BaseActivity {
     private TextView tv_game_title;
     @ViewInject(R.id.pBar_game_time)
     private ProgressBar pBar_game_time;
+    @ViewInject(R.id.iv_xx1)
+    private ImageView iv_xx1;
+    @ViewInject(R.id.iv_xx2)
+    private ImageView iv_xx2;
+    @ViewInject(R.id.iv_xx3)
+    private ImageView iv_xx3;
 
     private boolean isGameOver;
     private int progress;
@@ -52,6 +59,13 @@ public class GameActivity extends BaseActivity {
                 case 0x124:{//error
                     errNum--;
                     System.out.println("errNum = " + errNum);
+                    if(errNum==0){
+                        iv_xx1.setImageResource(R.drawable.xinxing_0);
+                    }else if(errNum==1){
+                        iv_xx2.setImageResource(R.drawable.xinxing_0);
+                    }else if(errNum==2){
+                        iv_xx3.setImageResource(R.drawable.xinxing_0);
+                    }
                     if(errNum<=0){
                         toast("Game Over");
                         isGameOver = true;
@@ -129,6 +143,11 @@ public class GameActivity extends BaseActivity {
             itv.setClickable(false);
             itvList.add(itv);
         }
+
+        //初始化生命值数据
+        iv_xx1.setImageResource(R.drawable.xinxing_1);
+        iv_xx2.setImageResource(R.drawable.xinxing_1);
+        iv_xx3.setImageResource(R.drawable.xinxing_1);
 
     }
 
