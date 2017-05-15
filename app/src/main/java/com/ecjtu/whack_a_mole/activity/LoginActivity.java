@@ -1,6 +1,8 @@
 package com.ecjtu.whack_a_mole.activity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -53,7 +55,7 @@ public class LoginActivity extends BaseActivity {
         initView();
     }
 
-    private void login(String name, String password) {
+    private void login(final String name, final String password) {
         DialogUtils.showWaitingDialog(LoginActivity.this,"登录中...");
         String url = "http://139.199.210.125:8097/mole/login?action=checkUser&username="+name+"&password="+password;
         RequestParams params = new RequestParams(url);
@@ -68,10 +70,23 @@ public class LoginActivity extends BaseActivity {
                         toast(result.getString("msg"));
                     }else{
                         System.out.println(result.getString("msg"));
+                        SharedPreferences sharedPreferences= getSharedPreferences("user",
+                                Activity.MODE_PRIVATE);
+                        //实例化SharedPreferences.Editor对象
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        //用putString的方法保存数据
+                        editor.putString("username",name);
                         startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                        System.out.println("====cb_password:"+cb_password.isChecked());
                         if(!cb_password.isChecked()){
                             et_password.setText("");
+                            editor.putBoolean("isChecked",false);
+                        }else{
+                            editor.putString("password", password);
+                            editor.putBoolean("isChecked",true);
+                            //提交当前数据
                         }
+                        editor.apply();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -114,6 +129,16 @@ public class LoginActivity extends BaseActivity {
 
 
     private void initView() {
-        cb_password.setChecked(false);
+        SharedPreferences sharedPreferences= getSharedPreferences("user",
+                Activity.MODE_PRIVATE);
+        String username=sharedPreferences.getString("username","");
+        String password=sharedPreferences.getString("password","");
+        boolean isChecked=sharedPreferences.getBoolean("isChecked",false);
+        System.out.println("isChecked = " + isChecked);
+        cb_password.setChecked(isChecked);
+        et_username.setText(username);
+        if(isChecked){
+            et_password.setText(password);
+        }
     }
 }
