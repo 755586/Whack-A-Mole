@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import com.ecjtu.whack_a_mole.util.DialogUtils;
+import com.ecjtu.whack_a_mole.util.LoginUser;
 import com.ecjtu.whack_a_mole.view.RegisterDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +19,8 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
+
+import java.util.Date;
 
 @ContentView(R.layout.activity_login)
 public class LoginActivity extends BaseActivity {
@@ -76,7 +79,6 @@ public class LoginActivity extends BaseActivity {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         //用putString的方法保存数据
                         editor.putString("username",name);
-                        startActivity(new Intent(LoginActivity.this,MainActivity.class));
                         System.out.println("====cb_password:"+cb_password.isChecked());
                         if(!cb_password.isChecked()){
                             et_password.setText("");
@@ -87,6 +89,9 @@ public class LoginActivity extends BaseActivity {
                             //提交当前数据
                         }
                         editor.apply();
+                        LoginUser.getInstance().setName(name);
+                        LoginUser.getInstance().setLoginTime(new Date());
+                        startActivity(new Intent(LoginActivity.this,MainActivity.class));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

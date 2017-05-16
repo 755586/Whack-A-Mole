@@ -2,6 +2,7 @@ package com.ecjtu.whack_a_mole.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.ecjtu.whack_a_mole.bean.IconText;
 import com.ecjtu.whack_a_mole.bean.IconTextView;
 import com.ecjtu.whack_a_mole.util.GameWord;
+import com.ecjtu.whack_a_mole.util.LoginUser;
 import com.ecjtu.whack_a_mole.util.MyRandom;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
@@ -29,6 +31,8 @@ import static com.ecjtu.whack_a_mole.activity.R.id.itv_game_no5;
 public class GameActivity extends BaseActivity {
     @ViewInject(R.id.tv_game_title)
     private TextView tv_game_title;
+    @ViewInject(R.id.tv_game_scope)
+    private TextView tv_game_scope;
     @ViewInject(R.id.pBar_game_time)
     private ProgressBar pBar_game_time;
     @ViewInject(R.id.iv_xx1)
@@ -45,7 +49,8 @@ public class GameActivity extends BaseActivity {
     private static final int timeOut = 8000;
     private int[] moles = new int[3];
     private int errNum = 3;
-
+    private int scope = 0;
+    private int maxScope;
     //handle 接收游戏线程反馈的消息
     private Handler handler = new Handler(){
         @Override
@@ -53,12 +58,14 @@ public class GameActivity extends BaseActivity {
             switch (msg.what) {
                 case 0x123:{//succuss
                     isGameOver = true;
+                    scope+=10;
+                    tv_game_scope.setText(String.valueOf(scope));
                     initData();//游戏继续，重新初始化游戏界面，弹出地鼠
                     break;
                 }
                 case 0x124:{//error
                     errNum--;
-                    System.out.println("errNum = " + errNum);
+                    //System.out.println("errNum = " + errNum);
                     if(errNum==0){
                         iv_xx1.setImageResource(R.drawable.xinxing_0);
                     }else if(errNum==1){
@@ -69,6 +76,15 @@ public class GameActivity extends BaseActivity {
                     if(errNum<=0){
                         toast("Game Over");
                         isGameOver = true;
+                        if(maxScope<scope){
+                            SharedPreferences sharedPreferences= getSharedPreferences("user",
+                                    Activity.MODE_PRIVATE);
+                            //实例化SharedPreferences.Editor对象
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putInt("maxScope",scope);
+                            editor.putString("maxScopeName", LoginUser.getInstance().getName());
+                            editor.apply();
+                        }
                         removeALLActivity();
                         startActivity(new Intent(GameActivity.this,MainActivity.class));
                     }else{
@@ -83,7 +99,7 @@ public class GameActivity extends BaseActivity {
                 }
                 case 0x126:{//timeOut
                     errNum--;
-                    System.out.println("errNum = " + errNum);
+                    //System.out.println("errNum = " + errNum);
                     if(errNum<=0){
                         toast("Game Over");
                         isGameOver = true;
@@ -149,6 +165,12 @@ public class GameActivity extends BaseActivity {
         iv_xx2.setImageResource(R.drawable.xinxing_1);
         iv_xx3.setImageResource(R.drawable.xinxing_1);
 
+        //初始化分数值
+        SharedPreferences sharedPreferences= getSharedPreferences("user",
+                Activity.MODE_PRIVATE);
+        maxScope = sharedPreferences.getInt("maxScope", 0);
+        tv_game_scope.setText(String.valueOf(maxScope));
+        System.out.println("maxScope = " + maxScope);
     }
 
     //初始化数据
@@ -181,19 +203,19 @@ public class GameActivity extends BaseActivity {
                 i++;
             }
         }
-        System.out.println("=====moles====");
-        for(int i=0;i<len;i++){
-            System.out.println(moles[i]);
-        }
+//        System.out.println("=====moles====");
+//        for(int i=0;i<len;i++){
+//            System.out.println(moles[i]);
+//        }
         tv_game_title.setText(chinese);
         pBar_game_time.setMax(maxProgress);
         pBar_game_time.setProgress(maxProgress);
     }
 
     private String getEnglish(int r,int index) {
-        System.out.println(r+"=="+index);
+        //System.out.println(r+"=="+index);
         int tem = MyRandom.getNumble(wordTotal/9);
-        System.out.println("tem = " + tem);
+        //System.out.println("tem = " + tem);
         Pair<String, String> english = wordlist.get(tem * 9 + r);
         if(index==0) chinese =english.second;
         return english.first;

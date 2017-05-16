@@ -32,7 +32,7 @@ public class MainActivity extends BaseActivity {
     @ViewInject(R.id.tv_main_title)
     private TextView tv_main_title;
 
-    @Event({R.id.btn_main_begin,R.id.btn_main_help,R.id.btn_main_exit})
+    @Event({R.id.btn_main_begin,R.id.btn_max_scope,R.id.btn_main_exit})
     private void onClick(View v){
        switch (v.getId()){
            case R.id.btn_main_begin:{
@@ -40,8 +40,8 @@ public class MainActivity extends BaseActivity {
                getAllType();
                break;
            }
-           case R.id.btn_main_help:{
-               toast("游戏帮助");
+           case R.id.btn_max_scope:{
+               startActivity(new Intent(MainActivity.this,MaxScopeActivity.class));
                break;
            }
            case R.id.btn_main_exit:{
